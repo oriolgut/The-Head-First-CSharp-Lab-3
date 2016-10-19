@@ -9,7 +9,7 @@ namespace Invaders.Model
 {
     class Player : Ship
     {
-        private  const double PIXELS_TO_MOVE = 10;
+        private const double PIXELS_TO_MOVE = 10;
 
         public Player() : base(new Point(playerSize.Width, InvaderModel.playAreaSize.Height - InvaderModel.playAreaSize.Height * 3), playerSize)
         {

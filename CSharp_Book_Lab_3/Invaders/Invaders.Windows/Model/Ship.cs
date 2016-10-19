@@ -11,7 +11,8 @@ namespace Invaders.Model
     {
         public Ship(Point location, Size size)
         {
-
+            Location = location;
+            Size = size;
         }
 
         public Point Location { get; protected set; }

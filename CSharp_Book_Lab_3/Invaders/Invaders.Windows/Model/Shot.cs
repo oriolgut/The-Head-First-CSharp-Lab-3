@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Invaders.Help;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Invaders.Model
 {
     class Shot
     {
-        public const double SHOT_PIXELS_PER_SECOND = 95;
+
         private DateTime _lastMoved;
 
         public Shot(Point location, Direction direction)
@@ -27,7 +28,7 @@ namespace Invaders.Model
         public void Move()
         {
             TimeSpan timeSinceLastMoved = DateTime.Now - _lastMoved;
-            double distance = timeSinceLastMoved.Milliseconds * SHOT_PIXELS_PER_SECOND / 1000;
+            double distance = timeSinceLastMoved.Milliseconds * Constants.SHOT_PIXELS_PER_SECOND / 1000;
             if(Direction == Direction.Up)
             {
                 distance *= -1;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Invaders.Help;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,6 @@ namespace Invaders.Model
 {
     class InvaderModel
     {
-        public const int MAXIMUM_PLAYER_SHOTS = 3;
-        public const int INITIAL_STAR_COUNT = 50;
 
         private Player _player;
         private DateTime? _playerDied = null;
@@ -37,6 +36,10 @@ namespace Invaders.Model
         public bool IsGameOver { get; private set; }
         public bool IsPlayerDead { get { return _playerDied.HasValue; } }
 
+        public event EventHandler<StarChangedEventArgs> StarChanged;
+        public event EventHandler<ShotMovedEventArgs> ShotMoved;
+        public event EventHandler<ShipChangedEventArgs> ShipChanged;
+
         public void EndGame()
         {
             IsGameOver = true;
@@ -62,7 +65,7 @@ namespace Invaders.Model
             }
             _stars.Clear();
 
-            for (int i = 0; i < INITIAL_STAR_COUNT; i++)
+            for (int i = 0; i < Constants.INITIAL_STAR_COUNT; i++)
             {
                 AddAStar();
             }
@@ -86,7 +89,7 @@ namespace Invaders.Model
                 where shot.Direction == Direction.Up
                 select shot;
 
-            if (playerShots.Count() < MAXIMUM_PLAYER_SHOTS)
+            if (playerShots.Count() < Constants.MAXIMUM_PLAYER_SHOTS)
             {
                 Point shotLocation = new Point(_player.Location.X + _player.Area.Width / 2, _player.Location.Y);
                 Shot shot = new Shot(shotLocation, Direction.Up);
@@ -107,15 +110,52 @@ namespace Invaders.Model
 
         public void Twinkle()
         {
-            if ((_random.Next(2) == 0) && _stars.Count > INITIAL_STAR_COUNT * .75)
+            if ((_random.Next(2) == 0) && _stars.Count > Constants.INITIAL_STAR_COUNT * .75)
             {
                 RemoveAStar();
             }
-            else if (_stars.Count < INITIAL_STAR_COUNT * 1.5)
+            else if (_stars.Count < Constants.INITIAL_STAR_COUNT * 1.5)
             {
                 AddAStar();
             }
 
+        }
+
+        public void Update(bool paused)
+        {
+            if (paused)
+            {
+                return;
+            }
+
+            if(_invaders.Count <= 0)
+            {
+                NextWave();
+            }
+
+            if (!IsPlayerDead)
+            {
+                MoveInvaders();
+                MoveShots();
+                ReturnFire();
+                CheckForInvaderCollisions();
+                CheckForPlayerCollisions();
+            }
+        }
+
+        protected void OnShipChanged(Ship shipUpdated, bool killed)
+        {
+            ShipChanged?.Invoke(this, new ShipChangedEventArgs(shipUpdated, killed));
+        }
+
+        protected void OnShotMoved(Shot shot, bool disappeared)
+        {
+            ShotMoved?.Invoke(this, new ShotMovedEventArgs(shot, disappeared));
+        }
+
+        protected void OnStarChanged(Point point, bool disappeared)
+        {
+            StarChanged?.Invoke(this, new StarChangedEventArgs(point, disappeared));
         }
 
         private void RemoveAStar()
@@ -139,35 +179,206 @@ namespace Invaders.Model
             }
         }
 
-        public void Update()
+        private void MoveInvaders()
         {
+            double millisecondsBetweenMovements = Math.Min(10 - Wave, 1) * (2 * _invaders.Count());
 
+            if (DateTime.Now - _lastUpdated > TimeSpan.FromMilliseconds(millisecondsBetweenMovements))
+            {
+                _lastUpdated = DateTime.Now;
+                if (!_hasMovedDown)
+                {
+                    InvadersTouchingBoundary();
+                    _hasMovedDown = true;   
+                }
+                else
+                {
+                    _hasMovedDown = false;
+                    foreach (Invader invader in _invaders)
+                    {
+                        invader.Move(_invaderDirection);
+                        OnShipChanged(invader, false);
+                    }
+                }
+            }
+        }
+
+        private void InvadersTouchingBoundary()
+        {
+            var invadersTouchingLeftBoundary = from invader in _invaders where invader.Area.Left < Constants.HORIZONTAL_INTERVAL select invader;
+            var invadersTouchingRightBoundary = from invader in _invaders where invader.Area.Right > playAreaSize.Width - (Constants.HORIZONTAL_INTERVAL * 2) select invader;
+
+            if (invadersTouchingLeftBoundary.Count() > 0)
+            {
+                foreach (Invader invader in _invaders)
+                {
+                    invader.Move(Direction.Down);
+                    OnShipChanged(invader, false);
+                }
+                _invaderDirection = Direction.Right;
+            }
+            else if (invadersTouchingRightBoundary.Count() > 0)
+            {
+                foreach (Invader invader in _invaders)
+                {
+                    invader.Move(Direction.Down);
+                    OnShipChanged(invader, false);
+                }
+                _invaderDirection = Direction.Left;
+            }
+        }
+
+        private void MoveShots()
+        {
+            foreach (Shot shot in _playerShots)
+            {
+                shot.Move();
+                OnShotMoved(shot, false);
+            }
+
+            var outOfBounds =
+                from shot in _playerShots
+                where (shot.Location.Y < 10 || shot.Location.Y > playAreaSize.Height - 10)
+                select shot;
+
+            foreach (Shot shot in outOfBounds.ToList())
+            {
+                _playerShots.Remove(shot);
+                OnShotMoved(shot, true);
+            }
+        }
+
+        private void ReturnFire()
+        {
+            if(_invaderShots.Count >= Wave + 1)
+            {
+                return;
+            }
+            
+            if(_random.Next(10) < 10 - Wave)
+            {
+                return;
+            }
+
+            var result =
+                from invader in _invaders
+                group invader by invader.Area.X into invaderGroup
+                orderby invaderGroup.Key descending
+                select invaderGroup;
+
+            var randomGroup = result.ElementAt(_random.Next(result.Count()));
+            var bottomInvader = randomGroup.Last();
+
+            Point shotLocation = new Point(bottomInvader.Area.X + bottomInvader.Area.Width / 2, bottomInvader.Area.Bottom + 2);
+            Shot invaderShot = new Shot(shotLocation, Direction.Down);
+            _playerShots.Add(invaderShot);
+            OnShotMoved(invaderShot, false);
+        }
+
+        private void CheckForInvaderCollisions()
+        {
+            List<Shot> hittedShots = new List<Shot>();
+            List<Invader> killedInvaders = new List<Invader>();
+
+            foreach (Shot shot in _playerShots)
+            {
+                foreach (Invader invader in _invaders)
+                {
+                    if (invader.Area.Contains(shot.Location) && shot.Direction == Direction.Up)
+                    {
+                        killedInvaders.Add(invader);
+                        hittedShots.Add(shot);
+                    }
+                }
+            }
+
+            foreach(Invader killedInvader in killedInvaders)
+            {
+                Score += killedInvader.Score;
+                _invaders.Remove(killedInvader);
+                OnShipChanged(killedInvader, true);
+            }
+
+            foreach(Shot hittedShot in hittedShots)
+            {
+                _playerShots.Remove(hittedShot);
+                OnShotMoved(hittedShot, true);
+            }
+        }
+
+        private void CheckForPlayerCollisions()
+        {
+            bool hasToRemoveAllShots = false;
+            InvadersReachedTheBottom();
+
+            var shotsHit = from shot in _playerShots where shot.Direction == Direction.Down && _player.Area.Contains(shot.Location) select shot;
+            if (shotsHit.Count() > 0)
+            {
+                Lives--;
+                if (Lives >= 0)
+                {
+                    _playerDied = DateTime.Now;
+                    OnShipChanged(_player, true);
+                    hasToRemoveAllShots = true;
+                }
+                else
+                {
+                    EndGame();
+                }
+            }
+
+            if (hasToRemoveAllShots)
+            {
+                foreach (Shot shot in _playerShots.ToList())
+                {
+                    _playerShots.Remove(shot);
+                    OnShotMoved(shot, true);
+                }
+            }
+        }
+
+        private void InvadersReachedTheBottom()
+        {
+            var result = from invader in _invaders where invader.Area.Bottom > _player.Area.Top + _player.Size.Height select invader;
+            if (result.Count() > 0)
+            {
+                EndGame();
+            }
         }
 
         private void NextWave()
         {
-            throw new NotImplementedException();
-        }
+            Wave++;
+            _invaders.Clear();
 
-        public event EventHandler<ShipChangedEventArgs> ShipChanged;
-
-        protected void OnShipChanged(Ship shipUpdated, bool killed)
-        {
-            ShipChanged?.Invoke(this, new ShipChangedEventArgs(shipUpdated, killed));
-        }
-
-        public event EventHandler<ShotMovedEventArgs> ShotMoved;
-
-        protected void OnShotMoved(Shot shot, bool disappeared)
-        {
-            ShotMoved?.Invoke(this, new ShotMovedEventArgs(shot, disappeared));
-        }
-
-        public event EventHandler<StarChangedEventArgs> StarChanged;
-
-        protected void OnStarChanged(Point point, bool disappeared)
-        {
-            StarChanged?.Invoke(this, new StarChangedEventArgs(point, disappeared));
+            for (int row = 0; row <= 5; row++)
+            {
+                for (int column = 0; column < 11; column++)
+                {
+                    Point location = new Point(column * Invader.invaderSize.Width * 1.4, row * Invader.invaderSize.Height * 1.4);
+                    Invader invader;
+                    switch (row)
+                    {
+                        case 0:
+                            invader = new Invader(InvaderType.Spaceship, location, 50);
+                            break;
+                        case 1:
+                            invader = new Invader(InvaderType.Bug, location, 40);
+                            break;
+                        case 2:
+                            invader = new Invader(InvaderType.Saucer, location, 30);
+                            break;
+                        case 3:
+                            invader = new Invader(InvaderType.Satellite, location, 20);
+                            break;
+                        default:
+                            invader = new Invader(InvaderType.Star, location, 10);
+                            break;
+                    }
+                    _invaders.Add(invader);
+                    OnShipChanged(invader, false);
+                }
+            }
         }
     }
 }

@@ -114,6 +114,7 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Help\Constants.cs" />
     <Compile Include="Model\Direction.cs" />
     <Compile Include="Model\Invader.cs" />
     <Compile Include="Model\InvaderModel.cs" />
