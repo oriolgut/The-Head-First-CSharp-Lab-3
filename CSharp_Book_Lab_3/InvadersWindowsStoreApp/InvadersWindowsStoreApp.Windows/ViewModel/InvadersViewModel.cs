@@ -6,8 +6,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -16,6 +14,7 @@ namespace InvadersWindowsStoreApp.ViewModel
 {
     public class InvadersViewModel : INotifyPropertyChanged
     {
+        
         private readonly ObservableCollection<FrameworkElement> _sprites = new ObservableCollection<FrameworkElement>();
         private readonly ObservableCollection<object> _lives = new ObservableCollection<object>();
         private readonly InvaderModel _model = new InvaderModel();
@@ -41,7 +40,7 @@ namespace InvadersWindowsStoreApp.ViewModel
             _timer.Interval = TimeSpan.FromMilliseconds(100);
             _timer.Tick += TimerTickEventHandler;
 
-            EndGame();
+            _model.EndGame();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -61,7 +60,7 @@ namespace InvadersWindowsStoreApp.ViewModel
                 RecreateScanLines();
             }
         }
-
+        
         public void StartGame()
         {
             IsPaused = false;
@@ -86,10 +85,6 @@ namespace InvadersWindowsStoreApp.ViewModel
             }
         }
 
-        private void EndGame()
-        {
-            throw new NotImplementedException();
-        }
 
         private void ModelShipChangedEventHandler(object sender, ShipChangedEventArgs e)
         {
@@ -132,49 +127,6 @@ namespace InvadersWindowsStoreApp.ViewModel
                     }
                     _isPlayerFlashing = true;
                 }
-            }
-        }
-
-        private void StopPlayerFromFlashing()
-        {
-            if (_isPlayerFlashing)
-            {
-                _isPlayerFlashing = false;
-                AnimatedImage control = _playerControl as AnimatedImage;
-                if (control != null)
-                {
-                    control.StopFlashing();
-                }
-            }
-        }
-        private void CreateOrStopFlashingPlayer(Player player)
-        {
-            StopPlayerFromFlashing();
-            if (_playerControl == null)
-            {
-                _playerControl = InvadersHelper.PlayerControlFactory(player, Scale);
-                _sprites.Add(_playerControl);
-            }
-            else
-            {
-                InvadersHelper.MoveElementOnCanvas(_playerControl, player.Location.X * Scale, player.Location.Y * Scale);
-                InvadersHelper.ResizeElement(_playerControl, player.Size.Width * Scale, player.Size.Height * Scale);
-            }
-        }
-
-        private void CreateOrMoveInvader(Invader invader)
-        {
-            if (!_invaders.ContainsKey(invader))
-            {
-                FrameworkElement invaderControl = InvadersHelper.InvaderControlFactory(invader, Scale);
-                _invaders[invader] = invaderControl;
-                _sprites.Add(invaderControl);
-            }
-            else
-            {
-                FrameworkElement invaderControl = _invaders[invader];
-                InvadersHelper.MoveElementOnCanvas(invaderControl, invader.Location.X * Scale, invader.Location.Y * Scale);
-                InvadersHelper.ResizeElement(invaderControl, invader.Size.Width * Scale, invader.Size.Height * Scale);
             }
         }
 
@@ -279,6 +231,50 @@ namespace InvadersWindowsStoreApp.ViewModel
                     _sprites.Remove(control);
                     _shotInvaders.Remove(control);
                 }
+            }
+        }
+
+        private void StopPlayerFromFlashing()
+        {
+            if (_isPlayerFlashing)
+            {
+                _isPlayerFlashing = false;
+                AnimatedImage control = _playerControl as AnimatedImage;
+                if (control != null)
+                {
+                    control.StopFlashing();
+                }
+            }
+        }
+
+        private void CreateOrStopFlashingPlayer(Player player)
+        {
+            StopPlayerFromFlashing();
+            if (_playerControl == null)
+            {
+                _playerControl = InvadersHelper.PlayerControlFactory(player, Scale);
+                _sprites.Add(_playerControl);
+            }
+            else
+            {
+                InvadersHelper.MoveElementOnCanvas(_playerControl, player.Location.X * Scale, player.Location.Y * Scale);
+                InvadersHelper.ResizeElement(_playerControl, player.Size.Width * Scale, player.Size.Height * Scale);
+            }
+        }
+
+        private void CreateOrMoveInvader(Invader invader)
+        {
+            if (!_invaders.ContainsKey(invader))
+            {
+                FrameworkElement invaderControl = InvadersHelper.InvaderControlFactory(invader, Scale);
+                _invaders[invader] = invaderControl;
+                _sprites.Add(invaderControl);
+            }
+            else
+            {
+                FrameworkElement invaderControl = _invaders[invader];
+                InvadersHelper.MoveElementOnCanvas(invaderControl, invader.Location.X * Scale, invader.Location.Y * Scale);
+                InvadersHelper.ResizeElement(invaderControl, invader.Size.Width * Scale, invader.Size.Height * Scale);
             }
         }
 
