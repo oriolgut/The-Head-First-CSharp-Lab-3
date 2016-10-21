@@ -46,6 +46,8 @@ namespace InvadersWindowsStoreApp.Model
 
         public void StartGame()
         {
+            IsGameOver = false;
+
             foreach (Invader invader in _invaders)
             {
                 OnShipChanged(invader, true);
@@ -67,7 +69,7 @@ namespace InvadersWindowsStoreApp.Model
             for (int i = 0; i < Constants.INITIAL_STAR_COUNT; i++)
             {
                 AddAStar();
-            }
+           }
 
             Lives = 2;
             Wave = 0;
@@ -117,7 +119,6 @@ namespace InvadersWindowsStoreApp.Model
             {
                 AddAStar();
             }
-
         }
 
         public void Update(bool paused)
@@ -127,7 +128,7 @@ namespace InvadersWindowsStoreApp.Model
                 return;
             }
 
-            if (_invaders.Count <= 0)
+            if (_invaders.Count == 0)
             {
                 NextWave();
             }
@@ -140,6 +141,13 @@ namespace InvadersWindowsStoreApp.Model
                 CheckForInvaderCollisions();
                 CheckForPlayerCollisions();
             }
+            else if (_playerDied.HasValue && (DateTime.Now - _playerDied > TimeSpan.FromSeconds(2.5)))
+            {
+                _playerDied = null;
+                OnShipChanged(_player, false);
+            }
+
+            Twinkle();
         }
 
         protected void OnShipChanged(Ship shipUpdated, bool killed)
@@ -300,6 +308,17 @@ namespace InvadersWindowsStoreApp.Model
                         hittedShots.Add(shot);
                     }
                 }
+                //var result = from invader in _invaders
+                //             where invader.Area.Contains(shot.Location) == true && shot.Direction == Direction.Up
+                //             select new { InvaderKilled = invader, ShotHit = shot };
+                //if (result.Count() > 0)
+                //{
+                //    foreach (var o in result)
+                //    {
+                //        hittedShots.Add(o.ShotHit);
+                //        killedInvaders.Add(o.InvaderKilled);
+                //    }
+                //}
             }
 
             foreach (Invader killedInvader in killedInvaders)
