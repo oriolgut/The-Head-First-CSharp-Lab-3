@@ -64,8 +64,16 @@ namespace InvadersWindowsStoreApp.ViewModel
         public void StartGame()
         {
             IsPaused = false;
-            foreach (var invader in _invaders.Values) _sprites.Remove(invader);
-            foreach (var shot in _shots.Values) _sprites.Remove(shot);
+            foreach (var invader in _invaders.Values)
+            {
+                _sprites.Remove(invader);
+            }
+
+            foreach (var shot in _shots.Values)
+            {
+                _sprites.Remove(shot);
+            }
+
             _model.StartGame();
             OnPropertyChanged(nameof(IsGameOver));
             _timer.Start();
@@ -84,7 +92,6 @@ namespace InvadersWindowsStoreApp.ViewModel
                 _sprites.Add(scanLine);
             }
         }
-
 
         private void ModelShipChangedEventHandler(object sender, ShipChangedEventArgs e)
         {
@@ -208,6 +215,7 @@ namespace InvadersWindowsStoreApp.ViewModel
 
             if (_model.Score != Score)
             {
+                Score = _model.Score;
                 OnPropertyChanged(nameof(Score));
             }
 
@@ -231,6 +239,12 @@ namespace InvadersWindowsStoreApp.ViewModel
                     _sprites.Remove(control);
                     _shotInvaders.Remove(control);
                 }
+            }
+
+            if (_model.IsGameOver)
+            {
+                OnPropertyChanged(nameof(IsGameOver));
+                _timer.Stop();
             }
         }
 
