@@ -124,6 +124,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\BooleanVisibilityConverter.cs" />
     <Compile Include="ViewModel\InvadersViewModel.cs" />
+    <Compile Include="View\AboutSettingsFlyout.xaml.cs">
+      <DependentUpon>AboutSettingsFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\AnimatedImage.xaml.cs">
       <DependentUpon>AnimatedImage.xaml</DependentUpon>
     </Compile>
@@ -142,6 +145,15 @@
     <None Include="InvadersWindowsStoreApp.Windows_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Helper\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="View\AboutSettingsFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\AnimatedImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

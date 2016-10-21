@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using InvadersWindowsStoreApp.View;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -28,6 +30,20 @@ namespace InvadersWindowsStoreApp
 #if WINDOWS_PHONE_APP
         private TransitionCollection transitions;
 #endif
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            SettingsPane.GetForCurrentView().CommandsRequested += OnCommandRequest;
+        }
+
+        private void OnCommandRequest(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs e)
+        {
+            SettingsCommand updateCommand = new SettingsCommand("About", "About Invaders", (handler) =>
+            {
+                AboutSettingsFlyout aboutFlyout = new AboutSettingsFlyout();
+                aboutFlyout.Show();
+            });
+            e.Request.ApplicationCommands.Add(updateCommand);
+        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
