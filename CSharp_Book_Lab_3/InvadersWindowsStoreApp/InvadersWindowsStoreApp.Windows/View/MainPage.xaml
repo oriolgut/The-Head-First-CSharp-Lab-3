@@ -8,10 +8,14 @@
     xmlns:common="using:InvadersWindowsStoreApp.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:viewmodel="using:InvadersWindowsStoreApp.ViewModel" 
+    SizeChanged="pageRoot_SizeChanged" 
+    ManipulationMode="TranslateX" ManipulationCompleted="pageRoot_ManipulationCompleted" ManipulationDelta="pageRoot_ManipulationDelta" Tapped="pageRoot_Tapped">
 
     <Page.Resources>
-        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
+        <viewmodel:InvadersViewModel x:Name="viewModel"/>
+        <viewmodel:BooleanVisibilityConverter x:Name="visibilityConverter"/>
         <x:String x:Key="AppName">Invaders</x:String>
     </Page.Resources>
 
@@ -20,16 +24,95 @@
         * Row 0 contains the back button and page title
         * Row 1 contains the rest of the page layout
     -->
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition/>
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
+    <Grid Style="{StaticResource LayoutRootStyle}" DataContext="{StaticResource viewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Right" Margin="0,60,120,0">
+            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Score}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+            <GridView ItemsSource="{Binding Lives}" HorizontalAlignment="Right" Width="Auto" Height="50" SelectionMode="None">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="ms-appx:///Assets/player.png" Stretch="Fill" Height="15" Width="20"/>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </StackPanel>
+
+        <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="10" Margin="5" Background="Black" 
+                Grid.Row="1" x:Name="playArea" Loaded="playArea_Loaded">
+            <ItemsControl 
+                    ItemsSource="{Binding Path=Sprites}" 
+                    Margin="5">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Black" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Border>
+
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Visibility="{Binding IsGameOver, Converter={StaticResource visibilityConverter}}" x:Name="gameProperties">
+
+            <TextBlock Grid.Row="1" Text="Game Over" VerticalAlignment="Center" 
+                       FontFamily="Arial Narrow" FontSize="150"
+                       Foreground="Yellow" FontWeight="ExtraBold" FontStyle="Italic"
+                       Margin="0,0,0,60" 
+                       />
+
+            <Button Content="Start a new game" Background="Black"
+                    HorizontalAlignment="Center" FontSize="30" Click="StartButtonClick"/>
+
+            <Button Content="Learn to build this app" Background="Black"
+                    HorizontalAlignment="Center" FontSize="30">
+                <Button.Flyout>
+                    <Flyout Placement="Full">
+                        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="360" Margin="20">
+                            <StackPanel.Transitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </StackPanel.Transitions>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                <TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="24" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="30,0,0,20">
+                                <TextBlock >
+                                    <Run FontWeight="ExtraBold" FontSize="18" FontStyle="Italic">Oriol Gut</Run> presents...
+                                </TextBlock>
+                                <TextBlock Grid.Row="1" Text="Invaders" HorizontalAlignment="Center" FontFamily="Arial Narrow" FontSize="50"
+                                           Foreground="Gold" FontWeight="ExtraBold" FontStyle="Italic" Margin="10"/>
+                                <TextBlock HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="Learn how to build this app!" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap" FontSize="18">
+                                    <TextBlock.Text>
+                                        Learning C# is fun, and it's easier than you think. Learn more here:
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <HyperlinkButton Content="https://github.com/oriolgut/" 
+                             NavigateUri="https://github.com/oriolgut/The-Head-First-CSharp-Lab-3/tree/master/CSharp_Book_Lab_3/InvadersWindowsStoreApp/InvadersWindowsStoreApp.Windows" 
+                             FontSize="16" Foreground="Black"/>
+                            </StackPanel>
+                            <Image Source="ms-appx:///Assets/hfcsharp.gif" Width="300" RenderTransformOrigin="0.5,0.5">
+                                <Image.RenderTransform>
+                                    <CompositeTransform Rotation="4"/>
+                                </Image.RenderTransform>
+                            </Image>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Text="Paused" VerticalAlignment="Center" 
+                   FontFamily="Arial Narrow" FontSize="60"
+                   Foreground="Yellow" FontWeight="ExtraBold" FontStyle="Italic"
+                   Margin="120,0,0,60" 
+                   Visibility="{Binding IsPaused, Converter={StaticResource visibilityConverter}}"/>
 
         <!-- Back button and page title -->
         <Grid>

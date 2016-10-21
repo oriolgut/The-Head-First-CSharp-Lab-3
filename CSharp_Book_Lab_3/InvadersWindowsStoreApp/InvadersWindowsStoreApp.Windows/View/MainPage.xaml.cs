@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Core;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -23,7 +24,6 @@ namespace InvadersWindowsStoreApp.View
     /// </summary>
     public sealed partial class MainPage : Page
     {
-
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
@@ -93,14 +93,94 @@ namespace InvadersWindowsStoreApp.View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedTo(e);
+            Window.Current.CoreWindow.KeyDown += KeyDownHandler;
+            Window.Current.CoreWindow.KeyUp += KeyUpHandler;
+            base.OnNavigatedTo(e);
         }
+
+
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedFrom(e);
+            Window.Current.CoreWindow.KeyDown -= KeyDownHandler;
+            Window.Current.CoreWindow.KeyUp -= KeyUpHandler;
+            base.OnNavigatedFrom(e);
+        }
+        #endregion
+
+        private void KeyDownHandler(CoreWindow sender, KeyEventArgs e)
+        {
+            viewModel.KeyDown(e.VirtualKey);
         }
 
-        #endregion
+        private void KeyUpHandler(CoreWindow sender, KeyEventArgs e)
+        {
+            viewModel.KeyUp(e.VirtualKey);
+        }
+
+        private void pageRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (e.Delta.Translation.X < -1)
+                viewModel.LeftGestureStarted();
+            else if (e.Delta.Translation.X > 1)
+                viewModel.RightGestureStarted();
+        }
+
+        private void pageRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            viewModel.LeftGestureCompleted();
+            viewModel.RightGestureCompleted();
+        }
+
+        bool firstTapOfGame = false;
+        private void pageRoot_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!firstTapOfGame)
+            {
+                viewModel.Tapped();
+            }
+            firstTapOfGame = false;
+        }
+
+        private void playArea_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePlayAreaSize(playArea.RenderSize);
+        }
+
+        private void pageRoot_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdatePlayAreaSize(new Size(e.NewSize.Width, e.NewSize.Height - 160));
+        }
+
+        private void UpdatePlayAreaSize(Size newPlayAreaSize)
+        {
+            double targetWidth;
+            double targetHeight;
+            if (newPlayAreaSize.Width > newPlayAreaSize.Height)
+            {
+                targetWidth = newPlayAreaSize.Height * 4 / 3;
+                targetHeight = newPlayAreaSize.Height;
+                double leftRightMargin = (newPlayAreaSize.Width - targetWidth) / 2;
+                playArea.Margin = new Thickness(leftRightMargin, 0, leftRightMargin, 0);
+            }
+            else
+            {
+                targetHeight = newPlayAreaSize.Width * 3 / 4;
+                targetWidth = newPlayAreaSize.Width;
+                double topBottomMargin = (newPlayAreaSize.Height - targetHeight) / 2;
+                playArea.Margin = new Thickness(0, topBottomMargin, 0, topBottomMargin);
+            }
+            playArea.Width = targetWidth;
+            playArea.Height = targetHeight;
+            viewModel.PlayAreaSize = new Size(targetWidth, targetHeight);
+        }
+
+        private void StartButtonClick(object sender, RoutedEventArgs e)
+        {
+            viewModel.StartGame();
+            firstTapOfGame = true;
+            
+        }
+
     }
 }

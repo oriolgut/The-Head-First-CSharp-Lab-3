@@ -1,0 +1,54 @@
+﻿<SettingsFlyout
+    x:Class="InvadersWindowsStoreApp.View.AboutSettingsFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:InvadersWindowsStoreApp.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    IconSource="Assets/SmallLogo.png"
+    Title="About Invaders"
+    x:Name="aboutInvaders"
+    d:DesignWidth="346">
+
+    <!-- This StackPanel acts as a root panel for vertical layout of the content sections -->
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+        
+        <!-- The StackPanel(s) below define individual content sections -->
+
+        <!-- Content Section 1-->
+        <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+            <!-- Section 1 header -->
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}">
+                <Run FontWeight="ExtraBold" FontSize="18" FontStyle="Italic">Oriol Gut</Run> presents...
+            </TextBlock>
+
+            <!-- Section 1 body -->
+
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap">
+                <TextBlock.Text>
+                    Invaders pays homage to one of the most popular, revered, and replicated icons in video game history.
+                    This is the final project in 
+                </TextBlock.Text>
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap" FontStyle="Italic" FontWeight="Bold">
+                <TextBlock.Text >
+                    Head First C# (3rd ed)
+                </TextBlock.Text>
+            </TextBlock>
+            <TextBlock Text="by Andrew Stellman and Jennifer Greene (O'Reilly, 2013)." Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap">
+                <TextBlock.Text>
+                    Invaders is an open source app. Get the source codde from GitHub:
+                </TextBlock.Text>
+            </TextBlock>
+            <HyperlinkButton Content="https://github.com/oriolgut/" 
+                             NavigateUri="https://github.com/oriolgut/The-Head-First-CSharp-Lab-3/tree/master/CSharp_Book_Lab_3/InvadersWindowsStoreApp/InvadersWindowsStoreApp.Windows" 
+                             FontSize="16" Foreground="Black"/>
+        </StackPanel>
+
+        <!-- Define more Content Sections below as necessary -->
+
+    </StackPanel>
+</SettingsFlyout>
