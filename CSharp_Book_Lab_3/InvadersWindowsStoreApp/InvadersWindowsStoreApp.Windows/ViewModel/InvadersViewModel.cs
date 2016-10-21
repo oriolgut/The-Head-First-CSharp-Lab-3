@@ -14,7 +14,6 @@ namespace InvadersWindowsStoreApp.ViewModel
 {
     public class InvadersViewModel : INotifyPropertyChanged
     {
-        
         private readonly ObservableCollection<FrameworkElement> _sprites = new ObservableCollection<FrameworkElement>();
         private readonly ObservableCollection<object> _lives = new ObservableCollection<object>();
         private readonly InvaderModel _model = new InvaderModel();
