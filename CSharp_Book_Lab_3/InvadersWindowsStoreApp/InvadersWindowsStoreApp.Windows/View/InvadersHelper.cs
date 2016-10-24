@@ -35,14 +35,91 @@ namespace InvadersWindowsStoreApp.View
                     filename = "satellite";
                     break;
             }
+
             List<string> imageList = new List<string>();
             for (int i = 1; i <= 4; i++)
+            {
                 imageList.Add($"{filename}{i}.png");
+            }
             return imageList;
+        }
+
+        public static FrameworkElement ScanLineFactory(int y, int width, double scale)
+        {
+            Rectangle rectangle = new Rectangle();
+            rectangle.Width = width * scale;
+            rectangle.Height = 2;
+            rectangle.Opacity = 0.1;
+            rectangle.Fill = new SolidColorBrush(Colors.White);
+            SetCanvasLocation(rectangle, 0, y * scale);
+
+            return rectangle;
+        }
+
+        public static void SetCanvasLocation(FrameworkElement control, double x, double y)
+        {
+            if(control == null)
+            {
+                return;
+            }
+
+            Canvas.SetLeft(control, x);
+            Canvas.SetTop(control, y);
+        }
+
+        public static void MoveElementOnCanvas(FrameworkElement frameworkElement, double toX, double toY)
+        {
+            if(frameworkElement == null)
+            {
+                return;
+            }
+
+            double fromX = Canvas.GetLeft(frameworkElement);
+            double fromY = Canvas.GetTop(frameworkElement);
+
+            Storyboard storyboard = new Storyboard();
+            DoubleAnimation animationX = CreateDoubleAnimation(frameworkElement, fromX, toX, "(Canvas.Left)");
+            DoubleAnimation animationY = CreateDoubleAnimation(frameworkElement, fromY, toY, "(Canvas.Top)");
+            storyboard.Children.Add(animationX);
+            storyboard.Children.Add(animationY);
+            storyboard.Begin();
+        }
+
+        public static DoubleAnimation CreateDoubleAnimation(FrameworkElement frameworkElement, double from, double to, string propertyToAnimate)
+        {
+            return frameworkElement == null ? null : CreateDoubleAnimation(frameworkElement, from, to, propertyToAnimate, TimeSpan.FromMilliseconds(25));
+        }
+
+        public static void ResizeElement(FrameworkElement control, double width, double height)
+        {
+            if(control == null)
+            {
+                return;
+            }
+
+            if (control.Width != width)
+            {
+                control.Width = width;
+            }
+
+            if (control.Height != height)
+            {
+                control.Height = height;
+            }
+        }
+
+        public static BitmapImage CreateImageFromAssets(string imageFilename)
+        {
+            return String.IsNullOrEmpty(imageFilename)? null : new BitmapImage(new Uri("ms-appx:///Assets/" + imageFilename));
         }
 
         internal static FrameworkElement InvaderControlFactory(Invader invader, double scale)
         {
+            if(invader == null)
+            {
+                return null;
+            }
+
             IEnumerable<string> imageNames = CreateImageList(invader.InvaderType);
             AnimatedImage invaderControl = new AnimatedImage(imageNames, TimeSpan.FromSeconds(0.75));
             invaderControl.Width = invader.Size.Width * scale;
@@ -54,6 +131,11 @@ namespace InvadersWindowsStoreApp.View
 
         internal static FrameworkElement ShotControlFactory(Shot shot, double scale)
         {
+            if (shot == null)
+            {
+                return null;
+            }
+
             Rectangle rectangle = new Rectangle();
             rectangle.Fill = new SolidColorBrush(Colors.Yellow);
             rectangle.Width = Shot.ShotSize.Width * scale;
@@ -65,6 +147,11 @@ namespace InvadersWindowsStoreApp.View
 
         internal static FrameworkElement StarControlFactory(Point point, double scale)
         {
+            if(point == null)
+            {
+                return null;
+            }
+
             FrameworkElement star;
             switch (_random.Next(3))
             {
@@ -85,27 +172,31 @@ namespace InvadersWindowsStoreApp.View
                     ((StarControl)star).SetFill(new SolidColorBrush(RandomStarColor()));
                     break;
             }
+
             SetCanvasLocation(star, point.X * scale, point.Y * scale);
             Canvas.SetZIndex(star, -1000);
 
             return star;
         }
 
-        public static FrameworkElement ScanLineFactory(int y, int width, double scale)
+        internal static FrameworkElement PlayerControlFactory(Player player, double scale)
         {
-            Rectangle rectangle = new Rectangle();
-            rectangle.Width = width * scale;
-            rectangle.Height = 2;
-            rectangle.Opacity = 0.1;
-            rectangle.Fill = new SolidColorBrush(Colors.White);
-            SetCanvasLocation(rectangle, 0, y * scale);
+            if(player == null)
+            {
+                return null;
+            }
 
-            return rectangle;
+            AnimatedImage playerImageControl = new AnimatedImage(new List<string>() { "player.png"}, TimeSpan.FromSeconds(1));
+            playerImageControl.Width = player.Size.Width * scale;
+            playerImageControl.Height = player.Size.Height * scale;
+            SetCanvasLocation(playerImageControl, player.Location.X * scale, player.Location.Y * scale);
+
+            return playerImageControl;
         }
 
         private static Color RandomStarColor()
         {
-            switch (_random.Next(6))
+            switch (_random.Next(10))
             {
                 case 0:
                     return Colors.LightGreen;
@@ -117,47 +208,26 @@ namespace InvadersWindowsStoreApp.View
                     return Colors.Cyan;
                 case 4:
                     return Colors.DarkRed;
+                case 5:
+                    return Colors.Yellow;
+                case 6:
+                    return Colors.Red;
+                case 7:
+                    return Colors.White;
+                case 8:
+                    return Colors.LightBlue;
                 default:
                     return Colors.Gold;
             }
         }
 
-        internal static FrameworkElement PlayerControlFactory(Player player, double scale)
+        private static DoubleAnimation CreateDoubleAnimation(FrameworkElement frameworkElement, double from, double to, string propertyToAnimate, TimeSpan timeSpan)
         {
-            AnimatedImage playerImageControl = new AnimatedImage(new List<string>() { "player.png", "player.png" }, TimeSpan.FromSeconds(1));
-            playerImageControl.Width = player.Size.Width * scale;
-            playerImageControl.Height = player.Size.Height * scale;
-            SetCanvasLocation(playerImageControl, player.Location.X * scale, player.Location.Y * scale);
+            if(timeSpan == null)
+            {
+                return null;
+            }
 
-            return playerImageControl;
-        }
-
-        public static void SetCanvasLocation(FrameworkElement control, double x, double y)
-        {
-            Canvas.SetLeft(control, x);
-            Canvas.SetTop(control, y);
-        }
-
-        public static void MoveElementOnCanvas(FrameworkElement FrameworkElement, double toX, double toY)
-        {
-            double fromX = Canvas.GetLeft(FrameworkElement);
-            double fromY = Canvas.GetTop(FrameworkElement);
-
-            Storyboard storyboard = new Storyboard();
-            DoubleAnimation animationX = CreateDoubleAnimation(FrameworkElement, fromX, toX, "(Canvas.Left)");
-            DoubleAnimation animationY = CreateDoubleAnimation(FrameworkElement, fromY, toY, "(Canvas.Top)");
-            storyboard.Children.Add(animationX);
-            storyboard.Children.Add(animationY);
-            storyboard.Begin();
-        }
-
-        public static DoubleAnimation CreateDoubleAnimation(FrameworkElement frameworkElement, double from, double to, string propertyToAnimate)
-        {
-            return CreateDoubleAnimation(frameworkElement, from, to, propertyToAnimate, TimeSpan.FromMilliseconds(25));
-        }
-
-        public static DoubleAnimation CreateDoubleAnimation(FrameworkElement frameworkElement, double from, double to, string propertyToAnimate, TimeSpan timeSpan)
-        {
             DoubleAnimation animation = new DoubleAnimation();
             Storyboard.SetTarget(animation, frameworkElement);
             Storyboard.SetTargetProperty(animation, propertyToAnimate);
@@ -166,24 +236,6 @@ namespace InvadersWindowsStoreApp.View
             animation.Duration = timeSpan;
 
             return animation;
-        }
-
-        public static void ResizeElement(FrameworkElement control, double width, double height)
-        {
-            if (control.Width != width)
-            {
-                control.Width = width;
-            }
-
-            if (control.Height != height)
-            {
-                control.Height = height;
-            }
-        }
-
-        public static BitmapImage CreateImageFromAssets(string imageFilename)
-        {
-            return new BitmapImage(new Uri("ms-appx:///Assets/" + imageFilename));
         }
     }
 }

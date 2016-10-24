@@ -7,7 +7,7 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class Player : Ship
+    public class Player : Ship
     {
         private const double PIXELS_TO_MOVE = 10;
 
@@ -27,13 +27,13 @@ namespace InvadersWindowsStoreApp.Model
                     {
                         Location = new Point(Location.X - PIXELS_TO_MOVE, Location.Y);
                     }
-                    break;
+                break;
                 case Direction.Right:
                     if (Location.X < InvaderModel.playAreaSize.Width - playerSize.Width * 2)
                     {
                         Location = new Point(Location.X + PIXELS_TO_MOVE, Location.Y);
                     }
-                    break;
+                break;
             }
         }
     }

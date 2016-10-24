@@ -8,9 +8,8 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class Invader : Ship
+    public class Invader : Ship
     {
-
         public Invader(InvaderType invaderType, Point location, int score) : base(location, invaderSize)
         {
             InvaderType = invaderType;

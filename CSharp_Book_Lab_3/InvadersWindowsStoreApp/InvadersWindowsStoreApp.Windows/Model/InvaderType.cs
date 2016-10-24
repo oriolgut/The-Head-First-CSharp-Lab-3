@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    enum InvaderType
+    public enum InvaderType
     {
         Bug,
         Saucer,

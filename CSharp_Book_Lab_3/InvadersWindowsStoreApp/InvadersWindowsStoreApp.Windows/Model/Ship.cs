@@ -7,7 +7,7 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    abstract class Ship
+    public abstract class Ship
     {
         public Ship(Point location, Size size)
         {

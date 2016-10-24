@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    enum Direction
+    public enum Direction
     {
         Up,
         Down,

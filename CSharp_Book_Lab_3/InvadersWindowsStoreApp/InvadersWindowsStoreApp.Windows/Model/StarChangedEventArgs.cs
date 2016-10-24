@@ -7,7 +7,7 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class StarChangedEventArgs : EventArgs
+    public class StarChangedEventArgs : EventArgs
     {
         public StarChangedEventArgs(Point point, bool disappeard)
         {

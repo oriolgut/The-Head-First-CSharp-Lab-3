@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class ShipChangedEventArgs : EventArgs
+    public class ShipChangedEventArgs : EventArgs
     {
         public ShipChangedEventArgs(Ship shipUpdated, bool killed)
         {

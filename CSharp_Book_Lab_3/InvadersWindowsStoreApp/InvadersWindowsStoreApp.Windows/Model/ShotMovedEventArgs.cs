@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class ShotMovedEventArgs : EventArgs
+    public class ShotMovedEventArgs : EventArgs
     {
         public ShotMovedEventArgs(Shot shot, bool disappeared)
         {

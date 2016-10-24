@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class InvaderModel
+    public  class InvaderModel
     {
         private Player _player;
         private DateTime? _playerDied = null;
@@ -38,6 +38,11 @@ namespace InvadersWindowsStoreApp.Model
         public event EventHandler<StarChangedEventArgs> StarChanged;
         public event EventHandler<ShotMovedEventArgs> ShotMoved;
         public event EventHandler<ShipChangedEventArgs> ShipChanged;
+
+        /// <summary>
+        /// only for testing:
+        public List<Point> Stars { get { return _stars; } }
+        /// </summary>
 
         public void EndGame()
         {
@@ -111,7 +116,7 @@ namespace InvadersWindowsStoreApp.Model
 
         public void Twinkle()
         {
-            if ((_random.Next(2) == 0) && _stars.Count > Constants.INITIAL_STAR_COUNT * .75)
+            if ((_random.Next(2) == 0) && _stars.Count > Constants.INITIAL_STAR_COUNT * 0.75)
             {
                 RemoveAStar();
             }
@@ -168,12 +173,21 @@ namespace InvadersWindowsStoreApp.Model
         internal void UpdateAllShipsAndStars()
         {
             foreach (Shot shot in _playerShots)
+            {
                 OnShotMoved(shot, false);
+            }
+
             foreach (Invader ship in _invaders)
+            {
                 OnShipChanged(ship, false);
+            }
+
             OnShipChanged(_player, false);
+
             foreach (Point star in _stars)
+            {
                 OnStarChanged(star, false);
+            }
         }
 
         private void RemoveAStar()
@@ -187,7 +201,8 @@ namespace InvadersWindowsStoreApp.Model
             _stars.RemoveAt(starIndex);
         }
 
-        private void AddAStar()
+        //for testing -> could be private
+        public void AddAStar() 
         {
             Point point = new Point(_random.Next((int)playAreaSize.Width), _random.Next(20, (int)playAreaSize.Height) - 20);
             if (!_stars.Contains(point))
@@ -308,17 +323,6 @@ namespace InvadersWindowsStoreApp.Model
                         hittedShots.Add(shot);
                     }
                 }
-                //var result = from invader in _invaders
-                //             where invader.Area.Contains(shot.Location) == true && shot.Direction == Direction.Up
-                //             select new { InvaderKilled = invader, ShotHit = shot };
-                //if (result.Count() > 0)
-                //{
-                //    foreach (var o in result)
-                //    {
-                //        hittedShots.Add(o.ShotHit);
-                //        killedInvaders.Add(o.InvaderKilled);
-                //    }
-                //}
             }
 
             foreach (Invader killedInvader in killedInvaders)
@@ -390,19 +394,19 @@ namespace InvadersWindowsStoreApp.Model
                     {
                         case 0:
                             invader = new Invader(InvaderType.Spaceship, location, 50);
-                            break;
+                        break;
                         case 1:
                             invader = new Invader(InvaderType.Bug, location, 40);
-                            break;
+                        break;
                         case 2:
                             invader = new Invader(InvaderType.Saucer, location, 30);
-                            break;
+                        break;
                         case 3:
                             invader = new Invader(InvaderType.Satellite, location, 20);
-                            break;
+                        break;
                         default:
                             invader = new Invader(InvaderType.Star, location, 10);
-                            break;
+                        break;
                     }
                     _invaders.Add(invader);
                     OnShipChanged(invader, false);

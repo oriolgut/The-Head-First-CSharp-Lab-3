@@ -78,11 +78,73 @@ namespace InvadersWindowsStoreApp.ViewModel
             _timer.Start();
         }
 
+
+
+        internal void KeyDown(VirtualKey virtualKey)
+        {
+            if (virtualKey == VirtualKey.Space)
+            {
+                _model.FireShot();
+            }
+
+            if (virtualKey == VirtualKey.Left)
+            {
+                _leftAction = DateTime.Now;
+            }
+
+            if (virtualKey == VirtualKey.Right)
+            {
+                _rightAction = DateTime.Now;
+            }
+        }
+
+        internal void KeyUp(VirtualKey virtualKey)
+        {
+            if (virtualKey == VirtualKey.Left)
+            {
+                _leftAction = null;
+            }
+
+            if (virtualKey == VirtualKey.Right)
+            {
+                _rightAction = null;
+            }
+        }
+
+        internal void LeftGestureStarted()
+        {
+            _leftAction = DateTime.Now;
+        }
+
+        internal void LeftGestureCompleted()
+        {
+            _leftAction = null;
+        }
+
+        internal void RightGestureStarted()
+        {
+            _rightAction = DateTime.Now;
+        }
+
+        internal void RightGestureCompleted()
+        {
+            _rightAction = null;
+        }
+
+        internal void Tapped()
+        {
+            _model.FireShot();
+        }
+
         private void RecreateScanLines()
         {
             foreach (FrameworkElement scanLine in _scanLines)
+            {
                 if (_sprites.Contains(scanLine))
+                {
                     _sprites.Remove(scanLine);
+                }
+            }
             _scanLines.Clear();
             for (int y = 0; y < 300; y += 2)
             {
@@ -104,7 +166,8 @@ namespace InvadersWindowsStoreApp.ViewModel
                 else if (e.ShipUpdated is Player)
                 {
                     Player player = e.ShipUpdated as Player;
-                    CreateOrStopFlashingPlayer(player);
+                    StopPlayerFromFlashing();
+                    CreatePlayer(player);
                 }
             }
             else
@@ -186,13 +249,8 @@ namespace InvadersWindowsStoreApp.ViewModel
             }
         }
 
-        private void TimerTickEventHandler(object sender, object e)
+        private void MovePlayer()
         {
-            if (_isLastPaused != IsPaused)
-            {
-                OnPropertyChanged(nameof(IsPaused));
-            }
-
             if (!IsPaused)
             {
                 if (_leftAction.HasValue && _rightAction.HasValue)
@@ -210,6 +268,16 @@ namespace InvadersWindowsStoreApp.ViewModel
                     _model.MovePlayer(Direction.Right);
                 }
             }
+        }
+
+        private void TimerTickEventHandler(object sender, object e)
+        {
+            if (_isLastPaused != IsPaused)
+            {
+                OnPropertyChanged(nameof(IsPaused));
+            }
+
+            MovePlayer();
             _model.Update(IsPaused);
 
             if (_model.Score != Score)
@@ -260,9 +328,8 @@ namespace InvadersWindowsStoreApp.ViewModel
             }
         }
 
-        private void CreateOrStopFlashingPlayer(Player player)
+        private void CreatePlayer(Player player)
         {
-            StopPlayerFromFlashing();
             if (_playerControl == null)
             {
                 _playerControl = InvadersHelper.PlayerControlFactory(player, Scale);
@@ -289,62 +356,6 @@ namespace InvadersWindowsStoreApp.ViewModel
                 InvadersHelper.MoveElementOnCanvas(invaderControl, invader.Location.X * Scale, invader.Location.Y * Scale);
                 InvadersHelper.ResizeElement(invaderControl, invader.Size.Width * Scale, invader.Size.Height * Scale);
             }
-        }
-
-        internal void KeyDown(VirtualKey virtualKey)
-        {
-            if (virtualKey == VirtualKey.Space)
-            {
-                _model.FireShot();
-            }
-
-            if (virtualKey == VirtualKey.Left)
-            {
-                _leftAction = DateTime.Now;
-            }
-
-            if (virtualKey == VirtualKey.Right)
-            {
-                _rightAction = DateTime.Now;
-            }
-        }
-
-        internal void KeyUp(VirtualKey virtualKey)
-        {
-            if (virtualKey == VirtualKey.Left)
-            {
-                _leftAction = null;
-            }
-
-            if (virtualKey == VirtualKey.Right)
-            {
-                _rightAction = null;
-            }
-        }
-
-        internal void LeftGestureStarted()
-        {
-            _leftAction = DateTime.Now;
-        }
-
-        internal void LeftGestureCompleted()
-        {
-            _leftAction = null;
-        }
-
-        internal void RightGestureStarted()
-        {
-            _rightAction = DateTime.Now;
-        }
-
-        internal void RightGestureCompleted()
-        {
-            _rightAction = null;
-        }
-
-        internal void Tapped()
-        {
-            _model.FireShot();
         }
 
         private void OnPropertyChanged(string propertyName)

@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
 {
-    class Shot
+    public class Shot
     {
         private DateTime _lastMoved;
 
