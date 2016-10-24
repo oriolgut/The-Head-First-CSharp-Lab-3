@@ -9,6 +9,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "InvadersWindowsStoreApp.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvadersWindowsStoreApp.Windows", "InvadersWindowsStoreApp\InvadersWindowsStoreApp.Windows\InvadersWindowsStoreApp.Windows.csproj", "{290B3250-9C53-4602-810B-2DD368A5C01E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestInvaders", "UnitTestInvaders\UnitTestInvaders.csproj", "{45033FF7-7A73-448D-9980-E5E6D4AA1A03}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		InvadersWindowsStoreApp\InvadersWindowsStoreApp.Shared\InvadersWindowsStoreApp.Shared.projitems*{290b3250-9c53-4602-810b-2dd368a5c01e}*SharedItemsImports = 4
@@ -49,6 +51,30 @@ Global
 		{290B3250-9C53-4602-810B-2DD368A5C01E}.Release|x86.ActiveCfg = Release|x86
 		{290B3250-9C53-4602-810B-2DD368A5C01E}.Release|x86.Build.0 = Release|x86
 		{290B3250-9C53-4602-810B-2DD368A5C01E}.Release|x86.Deploy.0 = Release|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|ARM.ActiveCfg = Debug|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|ARM.Build.0 = Debug|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|ARM.Deploy.0 = Debug|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x64.ActiveCfg = Debug|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x64.Build.0 = Debug|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x64.Deploy.0 = Debug|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x86.ActiveCfg = Debug|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x86.Build.0 = Debug|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Debug|x86.Deploy.0 = Debug|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|ARM.ActiveCfg = Release|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|ARM.Build.0 = Release|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|ARM.Deploy.0 = Release|ARM
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x64.ActiveCfg = Release|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x64.Build.0 = Release|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x64.Deploy.0 = Release|x64
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x86.ActiveCfg = Release|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x86.Build.0 = Release|x86
+		{45033FF7-7A73-448D-9980-E5E6D4AA1A03}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
