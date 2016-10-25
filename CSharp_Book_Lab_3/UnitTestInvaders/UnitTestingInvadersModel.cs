@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+﻿using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using InvadersWindowsStoreApp.Model;
 using Windows.Foundation;
-using System.Threading.Tasks;
 
 namespace UnitTestInvaders
 {
@@ -13,7 +8,7 @@ namespace UnitTestInvaders
     public class UnitTestingInvadersModel
     {
         [TestMethod]
-        public void TestMoveReturnsNewLocation()
+        public void TestMoveSetsNewLocation()
         {
             Player player = new Player();
             Direction direction = Direction.Right;
@@ -25,14 +20,16 @@ namespace UnitTestInvaders
         }
 
         [TestMethod]
-        public void TestAddStarAddsStar()
+        public void TestAddStar()
         {
             InvaderModel invaderModel = new InvaderModel();
             int oldCountOfStars = invaderModel.Stars.Count;
             invaderModel.AddAStar();
             int newCountOfStars = invaderModel.Stars.Count;
-
+            
             Assert.AreNotEqual(oldCountOfStars, newCountOfStars, "Should not be the same. Should contain a new Point element in Stars.");
         }
+
+
     }
 }
