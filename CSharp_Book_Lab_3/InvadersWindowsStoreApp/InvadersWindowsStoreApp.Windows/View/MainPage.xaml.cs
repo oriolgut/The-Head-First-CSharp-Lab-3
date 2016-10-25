@@ -24,6 +24,7 @@ namespace InvadersWindowsStoreApp.View
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private bool isFirstTapOfGame = false;
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
@@ -43,7 +44,6 @@ namespace InvadersWindowsStoreApp.View
         {
             get { return this.navigationHelper; }
         }
-
 
         public MainPage()
         {
@@ -121,9 +121,14 @@ namespace InvadersWindowsStoreApp.View
         private void pageRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (e.Delta.Translation.X < -1)
+            {
                 viewModel.LeftGestureStarted();
+            }
             else if (e.Delta.Translation.X > 1)
+            {
                 viewModel.RightGestureStarted();
+            }
+
         }
 
         private void pageRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -132,14 +137,14 @@ namespace InvadersWindowsStoreApp.View
             viewModel.RightGestureCompleted();
         }
 
-        bool firstTapOfGame = false;
+
         private void pageRoot_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (!firstTapOfGame)
+            if (!isFirstTapOfGame)
             {
                 viewModel.Tapped();
             }
-            firstTapOfGame = false;
+            isFirstTapOfGame = false;
         }
 
         private void playArea_Loaded(object sender, RoutedEventArgs e)
@@ -178,9 +183,7 @@ namespace InvadersWindowsStoreApp.View
         private void StartButtonClick(object sender, RoutedEventArgs e)
         {
             viewModel.StartGame();
-            firstTapOfGame = true;
-            
+            isFirstTapOfGame = true;
         }
-
     }
 }

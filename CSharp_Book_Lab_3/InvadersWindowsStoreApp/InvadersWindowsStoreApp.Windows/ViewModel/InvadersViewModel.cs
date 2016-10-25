@@ -50,6 +50,12 @@ namespace InvadersWindowsStoreApp.ViewModel
         public static double Scale { get; private set; }
         public int Score { get; private set; }
 
+
+        /// <summary>
+        /// for testing only:
+        public List<FrameworkElement> ScanLines { get { return _scanLines; } }
+        /// </summary>
+
         public Size PlayAreaSize
         {
             set
@@ -77,8 +83,6 @@ namespace InvadersWindowsStoreApp.ViewModel
             OnPropertyChanged(nameof(IsGameOver));
             _timer.Start();
         }
-
-
 
         internal void KeyDown(VirtualKey virtualKey)
         {
@@ -136,7 +140,7 @@ namespace InvadersWindowsStoreApp.ViewModel
             _model.FireShot();
         }
 
-        private void RecreateScanLines()
+        public void RecreateScanLines()
         {
             foreach (FrameworkElement scanLine in _scanLines)
             {

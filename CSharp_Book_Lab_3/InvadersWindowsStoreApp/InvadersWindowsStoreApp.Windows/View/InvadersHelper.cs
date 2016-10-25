@@ -110,7 +110,7 @@ namespace InvadersWindowsStoreApp.View
 
         public static BitmapImage CreateImageFromAssets(string imageFilename)
         {
-            return String.IsNullOrEmpty(imageFilename)? null : new BitmapImage(new Uri("ms-appx:///Assets/" + imageFilename));
+            return String.IsNullOrEmpty(imageFilename) ? null : new BitmapImage(new Uri("ms-appx:///Assets/" + imageFilename));
         }
 
         internal static FrameworkElement InvaderControlFactory(Invader invader, double scale)
