@@ -1,6 +1,7 @@
 ﻿using InvadersWindowsStoreApp.ViewModel;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using Assert = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert;
 
 namespace UnitTestInvaders
 {
@@ -15,8 +16,7 @@ namespace UnitTestInvaders
             viewModel.RecreateScanLines();
             int newScanLines = viewModel.ScanLines.Count;
 
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreNotEqual(oldScanLines, newScanLines, "Should not be equal. \"newScanLines\" should contain Scan Lines.");
+            Assert.AreNotEqual(oldScanLines, newScanLines, "Should not be equal. \"newScanLines\" should contain Scan Lines.");
         }
-
     }
 }
