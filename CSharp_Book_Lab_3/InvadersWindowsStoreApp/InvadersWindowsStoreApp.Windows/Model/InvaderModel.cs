@@ -371,7 +371,7 @@ namespace InvadersWindowsStoreApp.Model
 
         private void InvadersReachedTheBottom()
         {
-            var result = from invader in _invaders where invader.Area.Bottom > _player.Area.Top + _player.Size.Height select invader;
+            var result = from invader in _invaders where invader.Area.Bottom > _player.Area.Top - _player.Size.Height select invader;
             if (result.Count() > 0)
             {
                 EndGame();
