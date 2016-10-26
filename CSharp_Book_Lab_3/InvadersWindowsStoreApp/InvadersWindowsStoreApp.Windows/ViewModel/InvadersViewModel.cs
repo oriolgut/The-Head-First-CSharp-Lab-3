@@ -50,7 +50,6 @@ namespace InvadersWindowsStoreApp.ViewModel
         public static double Scale { get; private set; }
         public int Score { get; private set; }
 
-
         /// <summary>
         /// for testing only:
         public List<FrameworkElement> ScanLines { get { return _scanLines; } }
@@ -82,6 +81,25 @@ namespace InvadersWindowsStoreApp.ViewModel
             _model.StartGame();
             OnPropertyChanged(nameof(IsGameOver));
             _timer.Start();
+        }
+
+        //only for testing public
+        public void RecreateScanLines()
+        {
+            foreach (FrameworkElement scanLine in _scanLines)
+            {
+                if (_sprites.Contains(scanLine))
+                {
+                    _sprites.Remove(scanLine);
+                }
+            }
+            _scanLines.Clear();
+            for (int y = 0; y < 300; y += 2)
+            {
+                FrameworkElement scanLine = InvadersHelper.ScanLineFactory(y, 400, Scale);
+                _scanLines.Add(scanLine);
+                _sprites.Add(scanLine);
+            }
         }
 
         internal void KeyDown(VirtualKey virtualKey)
@@ -140,23 +158,7 @@ namespace InvadersWindowsStoreApp.ViewModel
             _model.FireShot();
         }
 
-        public void RecreateScanLines()
-        {
-            foreach (FrameworkElement scanLine in _scanLines)
-            {
-                if (_sprites.Contains(scanLine))
-                {
-                    _sprites.Remove(scanLine);
-                }
-            }
-            _scanLines.Clear();
-            for (int y = 0; y < 300; y += 2)
-            {
-                FrameworkElement scanLine = InvadersHelper.ScanLineFactory(y, 400, Scale);
-                _scanLines.Add(scanLine);
-                _sprites.Add(scanLine);
-            }
-        }
+
 
         private void ModelShipChangedEventHandler(object sender, ShipChangedEventArgs e)
         {

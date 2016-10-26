@@ -201,6 +201,7 @@ namespace InvadersWindowsStoreApp.Model
             _stars.RemoveAt(starIndex);
         }
 
+        //only for testing public 
         public void AddAStar() 
         {
             Point point = new Point(_random.Next((int)playAreaSize.Width), _random.Next(20, (int)playAreaSize.Height) - 20);
