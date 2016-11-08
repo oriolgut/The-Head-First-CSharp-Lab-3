@@ -43,9 +43,11 @@ namespace InvadersWindowsStoreApp.ViewModel
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public INotifyCollectionChanged Sprites { get { return _sprites; } }
-        public bool IsGameOver { get { return _model.IsGameOver; } }
         public INotifyCollectionChanged Lives { get { return _lives; } }
+
+        public bool IsGameOver { get { return _model.IsGameOver; } }
         public bool IsPaused { get; set; }
         public static double Scale { get; private set; }
         public int Score { get; private set; }
@@ -157,8 +159,6 @@ namespace InvadersWindowsStoreApp.ViewModel
         {
             _model.FireShot();
         }
-
-
 
         private void ModelShipChangedEventHandler(object sender, ShipChangedEventArgs e)
         {
