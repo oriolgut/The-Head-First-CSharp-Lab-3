@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 
 namespace InvadersWindowsStoreApp.Model
@@ -19,7 +17,7 @@ namespace InvadersWindowsStoreApp.Model
         private readonly List<Point> _stars = new List<Point>();
         private readonly Random _random = new Random();
         private Direction _invaderDirection = Direction.Left;
-        private bool _hasMovedDown = false;
+        private bool _hasMovedDown;
 
         public readonly static Size playAreaSize = new Size(400, 300);
 
@@ -76,6 +74,7 @@ namespace InvadersWindowsStoreApp.Model
                 AddAStar();
            }
 
+            Score = 0;
             Lives = 2;
             Wave = 0;
             _player = new Player();
@@ -111,7 +110,7 @@ namespace InvadersWindowsStoreApp.Model
                 return;
             }
             _player.Move(direction);
-            OnShipChanged(_player, false);
+            OnShipChanged(_player, killed: false);
         }
 
         public void Twinkle()
@@ -201,8 +200,7 @@ namespace InvadersWindowsStoreApp.Model
             _stars.RemoveAt(starIndex);
         }
 
-        //only for testing public 
-        public void AddAStar() 
+        internal void AddAStar() 
         {
             Point point = new Point(_random.Next((int)playAreaSize.Width), _random.Next(20, (int)playAreaSize.Height) - 20);
             if (!_stars.Contains(point))
@@ -394,19 +392,22 @@ namespace InvadersWindowsStoreApp.Model
                     {
                         case 0:
                             invader = new Invader(InvaderType.Spaceship, location, 50);
-                        break;
+                            break;
                         case 1:
                             invader = new Invader(InvaderType.Bug, location, 40);
-                        break;
+                            break;
                         case 2:
                             invader = new Invader(InvaderType.Saucer, location, 30);
-                        break;
+                            break;
                         case 3:
                             invader = new Invader(InvaderType.Satellite, location, 20);
-                        break;
-                        default:
+                            break;
+                        case 4:
+                        case 5:
                             invader = new Invader(InvaderType.Star, location, 10);
-                        break;
+                            break;
+                        default:
+                            throw new NotSupportedException(row.ToString());
                     }
                     _invaders.Add(invader);
                     OnShipChanged(invader, false);
